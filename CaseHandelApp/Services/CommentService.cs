@@ -15,17 +15,20 @@ namespace CaseHandelApp.Services
     {
         private readonly DataContext _context=new DataContext();
         private readonly UserService _userService = new UserService();
-        public async Task CreateAsync(CommentForm form)
+        public async Task CreateCommentAsync(CommentForm form)
         {
             var _user =await _userService.GetUser(form.UserEmail);
-            var commentEntity = new CommentEntity()
+            if (_user != null && _user.Email == form.UserEmail)
             {
-                Comments = form.Comment,
-                CaseId = form.CaseId,
-                UserId = _user.Id,
-            };
-            await _context.Comments.AddAsync(commentEntity);
-            await _context.SaveChangesAsync();  
+                var commentEntity = new CommentEntity()
+                {
+                    Comments = form.Comment,
+                    CaseId = form.CaseId,
+                    UserId = _user.Id,
+                };
+                await _context.Comments.AddAsync(commentEntity);
+                await _context.SaveChangesAsync();
+            }
         }
         public async Task GetAllComments()
         {

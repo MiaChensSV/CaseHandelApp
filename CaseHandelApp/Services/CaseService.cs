@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using CaseHandelApp.Contexts;
 using CaseHandelApp.Models.Entities;
 using CaseHandelApp.Models.Form;
@@ -40,25 +35,24 @@ namespace CaseHandelApp.Services
             {
                 Console.WriteLine("found user");
                 var _user=_context.Users.FirstOrDefault(x=>x.Email==form.Email);
-
-                Console.WriteLine(_user.FirstName);
-
                 var _comments = _context.Comments.Where(x => x.CaseId == form.CaseId);
                 if (!_context.Cases.Any(x => x.Id == form.CaseId))
                 {
+                    Console.WriteLine(_context.Cases);
                     var _caseEntity = new CaseEntity()
                     {
                         Title = form.Title,
                         Description = form.Description,
                         UserId = _user!.Id,
                         Comments = _comments.ToList(),
+                  
                     };
+                    Console.WriteLine(_caseEntity.Description);
                     _context.Cases.Add(_caseEntity);
                     await _context.SaveChangesAsync();
                     return _caseEntity;
                 }
             }
-            Console.WriteLine("out ");
             return null!;
         }
     }

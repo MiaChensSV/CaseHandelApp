@@ -11,6 +11,8 @@ namespace CaseHandelApp.Services
     {
         private readonly CaseService _caseService = new CaseService();
         private readonly UserService _userService = new UserService();
+        private readonly CommentService _commentService= new CommentService();
+        private readonly StatusTypeService _statusTypeService = new StatusTypeService();
         public async Task MainMenu()
         {
 
@@ -71,17 +73,15 @@ namespace CaseHandelApp.Services
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.FirstName = _input;
-            }
-
-            else Console.WriteLine("***Invailid input***");
+            }else await TryAgainCreateUser();
 
             Console.WriteLine("***Please type in your LastName***");
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.LastName = _input;
-            }
-            else Console.WriteLine("***Invailid input***");
+            }else await TryAgainCreateUser();
+            
 
             Console.WriteLine("***Are you an employee? If yes type yes***");
             _input = Console.ReadLine()!.Trim().ToLower(); 
@@ -90,8 +90,7 @@ namespace CaseHandelApp.Services
                 if (_input.ToLower().Trim() == "yes")
                     _form.UserTypeName = "Employee";
                 else _form.UserTypeName = "Customer";
-            }
-            else Console.WriteLine("***Invailid input***");
+            }else await TryAgainCreateUser();
 
             Console.WriteLine("***Please type in your Email***");
             _input = Console.ReadLine()!.Trim().ToLower(); 
@@ -99,35 +98,38 @@ namespace CaseHandelApp.Services
             {
                 _form.Email = _input;
             }
-            else Console.WriteLine("***Invailid input***");
+            else await TryAgainCreateUser();
+
             Console.WriteLine("***Please type in your PhoneNumber***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.PhoneNumber = _input;
             }
-            else Console.WriteLine("***Invailid input***");
+            else await TryAgainCreateUser();
+
             Console.WriteLine("***Please type in your StreetName***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.StreetName = _input;
             }
-            else Console.WriteLine("***Invailid input***");
+            else await TryAgainCreateUser();
+
             Console.WriteLine("***Please type in your PostalCode***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.PostalCode = _input;
             }
-            else Console.WriteLine("***Invailid input***");
+            else await TryAgainCreateUser();
+
             Console.WriteLine("***Please type in your City***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.City = _input;
-            }
-            else Console.WriteLine("***Invailid input***");
+            }else await TryAgainCreateUser();
 
             var result = await _userService.CreateUser(_form);
             if (result == null) { Console.WriteLine($"***{_form.FirstName} already exist***"); }
@@ -141,17 +143,65 @@ namespace CaseHandelApp.Services
 
         private async Task CreateComment()
         {
+            var _form=new CommentForm();
+            Console.Clear();
+            Console.WriteLine("please enter you email");
+            string? _input = Console.ReadLine()!.Trim().ToLower();
+            var _userEntity = await _userService.GetUser(_input);
+            if (_userEntity != null && _userEntity.Email == _input)
+            {
+                _form.UserEmail = _input;
+                Console.WriteLine("please type in the CaseId");
+                _input = Console.ReadLine()!.Trim().ToLower();
+                if(IsGuid(_input))
+                {
+                    var _caseEntity = await _caseService.GetSpecificAsync(x => x.Id == Guid.Parse(_input));
+                    if (_caseEntity != null && _caseEntity.Id == Guid.Parse(_input))
+                    {
+                        _form.CaseId = Guid.Parse(_input);
+                        Console.WriteLine("please enter you comment");
+                        _input = Console.ReadLine()!.Trim().ToLower();
+                        if (!string.IsNullOrEmpty(_input))
+                        {
+                            _form.Comment = _input;
+                        }
+                        else Console.WriteLine("***Invailid input***");
+                        await _commentService.CreateCommentAsync(_form);
+                        Console.WriteLine("Comment has been saved");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("***Invalid CaseId***");
+                }               
+            }
+            else
+            {
+                Console.WriteLine("***You are not registed in our system***");
+                Console.WriteLine("***Please register first***");
+                Console.ReadKey();
+                Console.Clear();
+                await MainMenu();
+            }               
         }
 
         private async Task GetAll()
         {
             Console.Clear();
-
+            Console.WriteLine("Here is all cases:\n");
             foreach (var cases in await _caseService.GetAllAsync())
             {
-                Console.WriteLine(
-                    $"Case Id is {cases.Id}\n Case is created at {cases.Created} by user {cases.User.FirstName} {cases.User.LastName}\n " +
-                    $"The status is {cases.Status.StatusName}.\n Case title is {cases.Title}\n Case Description is {cases.Description}\n");
+                Console.WriteLine("-------------------------------");
+                Console.WriteLine($"Case Id:{cases.Id}\n\nCreated: {cases.Created}\nPosted by user {cases.User.FirstName} {cases.User.LastName}\n\n" +
+                        $"Status: {cases.Status.StatusName}.\nCase Title: {cases.Title}\n\n****Case Description****\n{cases.Description}.\n");
+                if (cases.Comments.Count > 0)
+                {
+                    Console.WriteLine("Case comments are:\n");
+                    foreach (var comment in cases.Comments)
+                    {
+                        Console.WriteLine($"{comment.Comments}\n");
+                    }
+                }
             }
         }
 
@@ -167,14 +217,15 @@ namespace CaseHandelApp.Services
                     var aimedCase = await _caseService.GetSpecificAsync(x => x.Id == Guid.Parse(caseId));
                     if (aimedCase != null)
                     {
-
-                        Console.WriteLine($"Case Id is {aimedCase.Id}\n Case is created at {aimedCase.Created} by user {aimedCase.User.FirstName} {aimedCase.User.LastName}\n " +
-                        $"The status is {aimedCase.Status.StatusName}.\n Case title is {aimedCase.Title}\n Case Description is {aimedCase.Description}\n");
+                        Console.Clear();
+                        Console.WriteLine($"Case Id:{aimedCase.Id}\n\nCreated: {aimedCase.Created}\nPosted by user {aimedCase.User.FirstName} {aimedCase.User.LastName}\n\n"+
+                        $"Status: {aimedCase.Status.StatusName}.\nCase Title: {aimedCase.Title}\n\n****Case Description****\n{aimedCase.Description}.\n");
                         if (aimedCase.Comments.Count > 0)
                         {
+                            Console.WriteLine("Case comments are:\n");
                             foreach (var comment in aimedCase.Comments)
                             {
-                                Console.WriteLine($"Case comments are {comment}");
+                                Console.WriteLine($"{comment.Comments}\n");
                             }
                         }
                         else Console.WriteLine($"There is no comments related to this case {aimedCase.Title}");
@@ -191,9 +242,10 @@ namespace CaseHandelApp.Services
             Console.Clear();
             Console.WriteLine("***Please verify yourself by enter your email***");
             string? _input = Console.ReadLine()!.Trim().ToLower();
-            var userEmail=_userService.GetUser(_input);
-            if (userEmail!=null)
+            var userEntity= _userService.GetUser(_input).Result;
+            if (userEntity != null && _input==userEntity.Email)
             {
+                _form.Email = _input;
                 Console.WriteLine("***Please type in the report name***");
                 _input = Console.ReadLine()!.Trim().ToLower();
                 if (!string.IsNullOrEmpty(_input))
@@ -236,6 +288,12 @@ namespace CaseHandelApp.Services
         {
             Guid x;
             return Guid.TryParse(value, out x);
+        }
+        private async Task TryAgainCreateUser()
+        {
+                Console.WriteLine("***Invailid input***\nTry Again\n");
+                Console.ReadKey();
+                await CreateUser();
         }
     }
 }

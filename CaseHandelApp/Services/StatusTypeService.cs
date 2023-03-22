@@ -37,9 +37,9 @@ namespace CaseHandelApp.Services
             {
                 var _statuses = new List<StatusEntity>()
                 {
-                    new StatusEntity() {StatusName="Not Started"},
-                    new StatusEntity() { StatusName = "Processing" },
-                    new StatusEntity() { StatusName = "Finished" },
+                    new StatusEntity() { StatusTypeCode= 1, StatusName="Not Started"},
+                    new StatusEntity() { StatusTypeCode= 2, StatusName = "Processing" },
+                    new StatusEntity() { StatusTypeCode= 3, StatusName = "Finished" },
                 };
                 await _context.AddRangeAsync(_statuses);
                 await _context.SaveChangesAsync();

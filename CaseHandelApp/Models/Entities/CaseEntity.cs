@@ -18,7 +18,7 @@ namespace CaseHandelApp.Models.Entities
             var _dateTime = DateTime.Now;
             Created = _dateTime;
             Updated = _dateTime;
-            StatusId = 1;
+            StatusTypeCode = 1;
         }
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
@@ -33,9 +33,9 @@ namespace CaseHandelApp.Models.Entities
         [DeleteBehavior(DeleteBehavior.Restrict)]
         public UserEntity User { get; set; } = null!;
         public ICollection<CommentEntity> Comments { get; set; } = new HashSet<CommentEntity>();
-        public int StatusId { get; set; }
+        public int StatusTypeCode { get; set; }
 
-        [ForeignKey("StatusId")]
+        [ForeignKey("StatusTypeCode")]
         [DeleteBehavior(DeleteBehavior.Restrict)]
         public StatusEntity Status { get; set; } = null!;
     }

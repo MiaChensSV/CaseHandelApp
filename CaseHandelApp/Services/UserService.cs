@@ -70,7 +70,7 @@ namespace CaseHandelApp.Services
             {
                 return _user;
             }
-            else return null!;
+            else return _user!;
         }
     }
 }
