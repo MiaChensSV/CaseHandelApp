@@ -238,8 +238,8 @@ namespace CaseHandelApp.Services
                 {
                     Console.WriteLine("Case comments are:\n");
                     foreach (var comment in cases.Comments)
-                    {
-                        Console.WriteLine($"{comment.Comments}\n");
+                    {   
+                      Console.WriteLine($"\n{comment.Comments}. \nThis Comment is Created by {comment.User.FirstName} {comment.User.LastName} at {comment.Created}\n");
                     }
                 }
             }
@@ -265,7 +265,7 @@ namespace CaseHandelApp.Services
                             Console.WriteLine("Case comments are:\n");
                             foreach (var comment in _caseEntity.Comments)
                             {
-                                Console.WriteLine($"{comment.Comments}\n");
+                                Console.WriteLine($"*****\n{comment.Comments}. \nThis Comment is Created by {comment.User.FirstName} {comment.User.LastName} at {comment.Created}\n");
                             }
                         }
                         else Console.WriteLine($"There is no comments related to this case {_caseEntity.Title}");
