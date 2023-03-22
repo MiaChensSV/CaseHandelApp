@@ -8,6 +8,7 @@ namespace CaseHandelApp.Models.Form
 {
     internal class UserRegistrationForm
     {
+        public Guid Id { get; set; }= Guid.NewGuid();
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
         public string UserTypeName { get; set; } = null!;

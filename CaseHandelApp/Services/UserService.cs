@@ -13,7 +13,6 @@ namespace CaseHandelApp.Services
     internal class UserService
     {
         private readonly DataContext _context = new DataContext();
-
         public async Task<UserEntity> CreateUser(UserRegistrationForm form)
         {
             if (!_context.Users.Any(x => x.Email == form.Email))
@@ -61,6 +60,15 @@ namespace CaseHandelApp.Services
                 _context.Users.Add(userEntity);
                 await _context.SaveChangesAsync();
                 return userEntity;
+            }
+            else return null!;
+        }
+        public async Task<UserEntity> GetUser(string email)
+        {
+            var _user= await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (_user != null)
+            {
+                return _user;
             }
             else return null!;
         }

@@ -65,28 +65,25 @@ namespace CaseHandelApp.Services
         {
             var _form = new UserRegistrationForm();
             Console.Clear();
-            Console.WriteLine("Create new user");
-            Console.WriteLine("Please type in your FirstName");
+            Console.WriteLine("***********Create new user***********");
+            Console.WriteLine("***Please type in your FirstName***");
             string? _input=Console.ReadLine()!.Trim().ToLower();
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.FirstName = _input;
             }
 
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("******");
-            Console.WriteLine(_form.FirstName);
+            else Console.WriteLine("***Invailid input***");
 
-
-            Console.WriteLine("Please type in your LastName");
+            Console.WriteLine("***Please type in your LastName***");
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.LastName = _input;
             }
-            else Console.WriteLine("Invailid input");
+            else Console.WriteLine("***Invailid input***");
 
-            Console.WriteLine("Are you an employee? If yes type yes");
+            Console.WriteLine("***Are you an employee? If yes type yes***");
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
@@ -94,49 +91,47 @@ namespace CaseHandelApp.Services
                     _form.UserTypeName = "Employee";
                 else _form.UserTypeName = "Customer";
             }
-            else Console.WriteLine("Invailid input");
+            else Console.WriteLine("***Invailid input***");
 
-            Console.WriteLine("Please type in your Email");
+            Console.WriteLine("***Please type in your Email***");
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.Email = _input;
             }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your PhoneNumber");
+            else Console.WriteLine("***Invailid input***");
+            Console.WriteLine("***Please type in your PhoneNumber***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.PhoneNumber = _input;
             }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your StreetName");
+            else Console.WriteLine("***Invailid input***");
+            Console.WriteLine("***Please type in your StreetName***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.StreetName = _input;
             }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your PostalCode");
+            else Console.WriteLine("***Invailid input***");
+            Console.WriteLine("***Please type in your PostalCode***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.PostalCode = _input;
             }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your City");
+            else Console.WriteLine("***Invailid input***");
+            Console.WriteLine("***Please type in your City***");
             _input= Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
                 _form.City = _input;
             }
-            else Console.WriteLine("Invailid input");
+            else Console.WriteLine("***Invailid input***");
 
             var result = await _userService.CreateUser(_form);
-            Console.WriteLine(result);
-            Console.ReadKey();
-            if (result == null) { Console.WriteLine($"{_form.FirstName} already exist"); }
-            else { Console.WriteLine($"User {_form.FirstName} has created"); }
+            if (result == null) { Console.WriteLine($"***{_form.FirstName} already exist***"); }
+            else { Console.WriteLine($"***User {_form.FirstName} has created***"); }
         }
 
         private async Task Update()
@@ -194,78 +189,40 @@ namespace CaseHandelApp.Services
         {
             var _form = new CaseRegistrationForm();
             Console.Clear();
-            Console.WriteLine("Please verify yourself by enter your email");
-            Console.WriteLine("Please type in your FirstName");
+            Console.WriteLine("***Please verify yourself by enter your email***");
             string? _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
+            var userEmail=_userService.GetUser(_input);
+            if (userEmail!=null)
             {
-                _form.FirstName = _input;
-            }
+                Console.WriteLine("***Please type in the report name***");
+                _input = Console.ReadLine()!.Trim().ToLower();
+                if (!string.IsNullOrEmpty(_input))
+                {
+                    _form.Title= _input;
+                }else Console.WriteLine("***The title is empty***");
 
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("******");
-            Console.WriteLine(_form.FirstName);
+                Console.WriteLine("***Please describe the issue in detail***");
+                _input = Console.ReadLine()!.Trim().ToLower();
+                if (!string.IsNullOrEmpty(_input))
+                {
+                    _form.Description = _input;
+                }
+                else Console.WriteLine("***The description is empty***");
 
-
-            Console.WriteLine("Please type in your LastName");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
-            {
-                _form.LastName = _input;
+                var result = await _caseService.CreateAsync(_form);
+                Console.WriteLine(result);
+                Console.ReadKey();
+                if (result == null) { Console.WriteLine($"***{_form.Title} already exist***"); }
+                else { Console.WriteLine($"***User {_form.Title} has created***"); }
             }
-            else Console.WriteLine("Invailid input");
-
-            Console.WriteLine("Are you an employee? If yes type yes");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
+            else
             {
-                if (_input.ToLower().Trim() == "yes")
-                    _form.UserTypeName = "Employee";
-                else _form.UserTypeName = "Customer";
+                Console.WriteLine("***You are not registed in our system***");
+                Console.WriteLine("***Please register first***");
+                Console.ReadKey();
+                Console.Clear();
+                await MainMenu();
             }
-            else Console.WriteLine("Invailid input");
-
-            Console.WriteLine("Please type in your Email");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
-            {
-                _form.Email = _input;
-            }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your PhoneNumber");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
-            {
-                _form.PhoneNumber = _input;
-            }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your StreetName");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
-            {
-                _form.StreetName = _input;
-            }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your PostalCode");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
-            {
-                _form.PostalCode = _input;
-            }
-            else Console.WriteLine("Invailid input");
-            Console.WriteLine("Please type in your City");
-            _input = Console.ReadLine()!.Trim().ToLower();
-            if (!string.IsNullOrEmpty(_input))
-            {
-                _form.City = _input;
-            }
-            else Console.WriteLine("Invailid input");
-
-            var result = await _userService.CreateUser(_form);
-            Console.WriteLine(result);
-            Console.ReadKey();
-            if (result == null) { Console.WriteLine($"{_form.FirstName} already exist"); }
-            else { Console.WriteLine($"User {_form.FirstName} has created"); }
         }
         public async Task ExitProgram()
         {

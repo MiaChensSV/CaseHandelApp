@@ -23,6 +23,13 @@ namespace CaseHandelApp.Contexts
             optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\yihon\source\repos\CaseHandelApp\CaseHandelApp\Contexts\case_handel_local_db.mdf;Integrated Security=True;Connect Timeout=30");
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<UserEntity>()
+                .HasIndex(x => x.Email)
+                .IsUnique();
+        }
+
         public DbSet<AddressEntity> Addresses { get; set; }
         public DbSet<CaseEntity> Cases { get; set; }
         public DbSet<CommentEntity> Comments { get; set; }
