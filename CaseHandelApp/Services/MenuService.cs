@@ -160,13 +160,16 @@ namespace CaseHandelApp.Services
                         Console.WriteLine("Please enter your choice\n");
                         Console.WriteLine("If you want to quit, please enter Q\n");
                         string? _input = Console.ReadLine()!.Trim().ToLower();
-                        _caseEntity.StatusTypeCode = int.Parse(_input);
-                        if (_caseEntity.StatusTypeCode == 1 || _caseEntity.StatusTypeCode == 2 || _caseEntity.StatusTypeCode == 3) 
+                        if (int.TryParse(_input, out int value))
                         {
-                            var result = await _caseService.UpdateAsync(_caseEntity);
-                            if (result != null) { Console.WriteLine($"Case: {_caseEntity.Title} is updated"); }
-                            else { Console.WriteLine($"***Case {_caseEntity.Title} is not found***"); }
-                        }
+                            if (value == 1 || value == 2 || value == 3)
+                            {
+                                var result = await _caseService.UpdateAsync(_caseEntity);
+                                if (result != null) { Console.WriteLine($"Case: {_caseEntity.Title} is updated"); }
+                                else { Console.WriteLine($"***Case {_caseEntity.Title} is not found***"); }
+                            }
+                        }                     
+                        else if (_input == "q") await ExitProgram();
                         else Console.WriteLine("Invalid Input");                        
                     }
                 }

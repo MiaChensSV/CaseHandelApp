@@ -33,21 +33,17 @@ namespace CaseHandelApp.Services
         {
             if(_context.Users.Any(x=>x.Email==form.Email))
             {
-                Console.WriteLine("found user");
                 var _user=_context.Users.FirstOrDefault(x=>x.Email==form.Email);
                 var _comments = _context.Comments.Where(x => x.CaseId == form.CaseId);
                 if (!_context.Cases.Any(x => x.Id == form.CaseId))
                 {
-                    Console.WriteLine(_context.Cases);
                     var _caseEntity = new CaseEntity()
                     {
                         Title = form.Title,
                         Description = form.Description,
                         UserId = _user!.Id,
-                        Comments = _comments.ToList(),
-                  
+                        Comments = _comments.ToList(),                  
                     };
-                    Console.WriteLine(_caseEntity.Description);
                     _context.Cases.Add(_caseEntity);
                     await _context.SaveChangesAsync();
                     return _caseEntity;
@@ -61,6 +57,7 @@ namespace CaseHandelApp.Services
             if (_caseEntity!=null)
             {
                 _caseEntity.StatusTypeCode= entity.StatusTypeCode;
+                _caseEntity.Updated=DateTime.Now;
                 _context.Cases.Update(_caseEntity);
                 await _context.SaveChangesAsync();
                 return _caseEntity;
