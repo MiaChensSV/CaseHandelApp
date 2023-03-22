@@ -167,8 +167,7 @@ namespace CaseHandelApp.Services
                             if (result != null) { Console.WriteLine($"Case: {_caseEntity.Title} is updated"); }
                             else { Console.WriteLine($"***Case {_caseEntity.Title} is not found***"); }
                         }
-                        else Console.WriteLine("Invalid Input");
-                        
+                        else Console.WriteLine("Invalid Input");                        
                     }
                 }
                 else Console.WriteLine("Invaild CaseId\nIt should be in Format FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");

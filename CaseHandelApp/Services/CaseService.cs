@@ -57,9 +57,7 @@ namespace CaseHandelApp.Services
         }
         public async Task<CaseEntity> UpdateAsync(CaseEntity entity)
         {
-            Console.WriteLine(entity.Id);
             var _caseEntity= await _context.Cases.FirstOrDefaultAsync(x=>x.Id==entity.Id);
-            Console.WriteLine(_caseEntity.Id);
             if (_caseEntity!=null)
             {
                 _caseEntity.StatusTypeCode= entity.StatusTypeCode;
