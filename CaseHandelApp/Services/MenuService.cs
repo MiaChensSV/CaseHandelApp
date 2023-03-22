@@ -27,7 +27,6 @@ namespace CaseHandelApp.Services
             Console.WriteLine("4, Get all issues(!!Only for employee)");
             Console.WriteLine("5, Add comments to existing issue(!!Only for employee)");
             Console.WriteLine("6, Change Status of existing issue(!!Only for employee)\n");
-
             Console.WriteLine("Please enter your choice\n");
             Console.WriteLine("If you want to quit, please enter Q\n");
 
@@ -148,7 +147,6 @@ namespace CaseHandelApp.Services
                 if (IsGuid(_caseId))
                 {
                     var _caseEntity = await _caseService.GetSpecificAsync(x => x.Id == Guid.Parse(_caseId));
-                    Console.WriteLine(_caseEntity.Title);
                     if (_caseEntity != null)
                     {
                         Console.WriteLine("Cool!You want to change the case status");
