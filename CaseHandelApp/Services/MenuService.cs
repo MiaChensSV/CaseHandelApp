@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
+using CaseHandelApp.Models.Entities;
 using CaseHandelApp.Models.Form;
 
 namespace CaseHandelApp.Services
@@ -49,7 +51,7 @@ namespace CaseHandelApp.Services
                     await CreateComment();
                     break;
                 case "6":
-                    await Update();
+                    await UpdateStatus();
                     break;
                 case "q":
                     await ExitProgram();
@@ -136,9 +138,42 @@ namespace CaseHandelApp.Services
             else { Console.WriteLine($"***User {_form.FirstName} has created***"); }
         }
 
-        private async Task Update()
+        private async Task UpdateStatus()
         {
-
+            Console.Clear();
+            Console.WriteLine("Please enter CaseId that you want to change.\n");
+            var _caseId = Console.ReadLine()!.Trim();
+            if (!string.IsNullOrEmpty(_caseId))
+            {
+                if (IsGuid(_caseId))
+                {
+                    var _caseEntity = await _caseService.GetSpecificAsync(x => x.Id == Guid.Parse(_caseId));
+                    Console.WriteLine(_caseEntity.Title);
+                    if (_caseEntity != null)
+                    {
+                        Console.WriteLine("Cool!You want to change the case status");
+                        Console.WriteLine($"CaseId:{_caseEntity.Id}\n");
+                        Console.WriteLine($"Current Status:{_caseEntity.Status.StatusName}\n");
+                        Console.WriteLine("1, Change to Not Begin");
+                        Console.WriteLine("2, Change to Processing");
+                        Console.WriteLine("3, Change to Finish!");
+                        Console.WriteLine("Please enter your choice\n");
+                        Console.WriteLine("If you want to quit, please enter Q\n");
+                        string? _input = Console.ReadLine()!.Trim().ToLower();
+                        _caseEntity.StatusTypeCode = int.Parse(_input);
+                        if (_caseEntity.StatusTypeCode == 1 || _caseEntity.StatusTypeCode == 2 || _caseEntity.StatusTypeCode == 3) 
+                        {
+                            var result = await _caseService.UpdateAsync(_caseEntity);
+                            if (result != null) { Console.WriteLine($"Case: {_caseEntity.Title} is updated"); }
+                            else { Console.WriteLine($"***Case {_caseEntity.Title} is not found***"); }
+                        }
+                        else Console.WriteLine("Invalid Input");
+                        
+                    }
+                }
+                else Console.WriteLine("Invaild CaseId\nIt should be in Format FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+            }
+            else Console.WriteLine("You did not enter a CaseId");
         }
 
         private async Task CreateComment()
@@ -165,7 +200,12 @@ namespace CaseHandelApp.Services
                         {
                             _form.Comment = _input;
                         }
-                        else Console.WriteLine("***Invailid input***");
+                        else 
+                        {
+                            Console.WriteLine("***Invailid input***");
+                            Console.WriteLine("please enter you comment");
+                            _input = Console.ReadLine()!.Trim().ToLower();
+                        };
                         await _commentService.CreateCommentAsync(_form);
                         Console.WriteLine("Comment has been saved");
                     }
@@ -193,7 +233,7 @@ namespace CaseHandelApp.Services
             {
                 Console.WriteLine("-------------------------------");
                 Console.WriteLine($"Case Id:{cases.Id}\n\nCreated: {cases.Created}\nPosted by user {cases.User.FirstName} {cases.User.LastName}\n\n" +
-                        $"Status: {cases.Status.StatusName}.\nCase Title: {cases.Title}\n\n****Case Description****\n{cases.Description}.\n");
+                        $"Update:{cases.Updated}\nStatus: {cases.Status.StatusName}.\nCase Title: {cases.Title}\n\n****Case Description****\n{cases.Description}.\n");
                 if (cases.Comments.Count > 0)
                 {
                     Console.WriteLine("Case comments are:\n");
@@ -209,28 +249,28 @@ namespace CaseHandelApp.Services
         {
             Console.Clear();
             Console.WriteLine("Please enter the CaseNumber you are looking for");
-            var caseId = Console.ReadLine()!.Trim();
-            if (!string.IsNullOrEmpty(caseId))
+            var _caseId = Console.ReadLine()!.Trim();
+            if (!string.IsNullOrEmpty(_caseId))
             {
-                if (IsGuid(caseId))
+                if (IsGuid(_caseId))
                 {
-                    var aimedCase = await _caseService.GetSpecificAsync(x => x.Id == Guid.Parse(caseId));
-                    if (aimedCase != null)
+                    var _caseEntity = await _caseService.GetSpecificAsync(x => x.Id == Guid.Parse(_caseId));
+                    if (_caseEntity != null)
                     {
                         Console.Clear();
-                        Console.WriteLine($"Case Id:{aimedCase.Id}\n\nCreated: {aimedCase.Created}\nPosted by user {aimedCase.User.FirstName} {aimedCase.User.LastName}\n\n"+
-                        $"Status: {aimedCase.Status.StatusName}.\nCase Title: {aimedCase.Title}\n\n****Case Description****\n{aimedCase.Description}.\n");
-                        if (aimedCase.Comments.Count > 0)
+                        Console.WriteLine($"Case Id:{_caseEntity.Id}\n\nCreated: {_caseEntity.Created}\nPosted by user {_caseEntity.User.FirstName} {_caseEntity.User.LastName}\n\n"+
+                        $"Update:{_caseEntity.Updated}\nStatus: {_caseEntity.Status.StatusName}.\nCase Title: {_caseEntity.Title}\n\n****Case Description****\n{_caseEntity.Description}.\n");
+                        if (_caseEntity.Comments.Count > 0)
                         {
                             Console.WriteLine("Case comments are:\n");
-                            foreach (var comment in aimedCase.Comments)
+                            foreach (var comment in _caseEntity.Comments)
                             {
                                 Console.WriteLine($"{comment.Comments}\n");
                             }
                         }
-                        else Console.WriteLine($"There is no comments related to this case {aimedCase.Title}");
+                        else Console.WriteLine($"There is no comments related to this case {_caseEntity.Title}");
                     }
-                    else Console.WriteLine($"There is no case related to this CaseNumber{caseId}");
+                    else Console.WriteLine($"There is no case related to this CaseNumber{_caseId}");
                 }
                 else Console.WriteLine("You did not type in right case number.\nIt should be in Format FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
             }
@@ -251,7 +291,7 @@ namespace CaseHandelApp.Services
                 if (!string.IsNullOrEmpty(_input))
                 {
                     _form.Title= _input;
-                }else Console.WriteLine("***The title is empty***");
+                }else await TryAgainCreateReport();
 
                 Console.WriteLine("***Please describe the issue in detail***");
                 _input = Console.ReadLine()!.Trim().ToLower();
@@ -259,11 +299,9 @@ namespace CaseHandelApp.Services
                 {
                     _form.Description = _input;
                 }
-                else Console.WriteLine("***The description is empty***");
+                else await TryAgainCreateReport();
 
                 var result = await _caseService.CreateAsync(_form);
-                Console.WriteLine(result);
-                Console.ReadKey();
                 if (result == null) { Console.WriteLine($"***{_form.Title} already exist***"); }
                 else { Console.WriteLine($"***User {_form.Title} has created***"); }
             }
@@ -291,9 +329,15 @@ namespace CaseHandelApp.Services
         }
         private async Task TryAgainCreateUser()
         {
-                Console.WriteLine("***Invailid input***\nTry Again\n");
-                Console.ReadKey();
-                await CreateUser();
+            Console.WriteLine("***Invailid input***\nTry Again\n");
+            Console.ReadKey();
+            await CreateUser();
+        }
+        private async Task TryAgainCreateReport()
+        {
+            Console.WriteLine("***Invailid input***\nTry Again\n");
+            Console.ReadKey();
+            await CreateReport();
         }
     }
 }
