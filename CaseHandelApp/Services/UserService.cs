@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CaseHandelApp.Contexts;
+﻿using CaseHandelApp.Contexts;
 using CaseHandelApp.Models.Entities;
 using CaseHandelApp.Models.Form;
 using Microsoft.EntityFrameworkCore;
