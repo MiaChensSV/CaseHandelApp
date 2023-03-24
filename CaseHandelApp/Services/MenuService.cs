@@ -62,10 +62,13 @@ namespace CaseHandelApp.Services
             var _form = new UserRegistrationForm();
             Console.Clear();
             Console.WriteLine("***********Create new user***********");
+            Console.WriteLine("***If you want to quit, ANYTIME please enter Q***\n\n");
             Console.WriteLine("***Please type in your FirstName***");
+
             string? _input=Console.ReadLine()!.Trim().ToLower();
             if (!string.IsNullOrEmpty(_input))
-            {
+            {   
+                if(_input=="q") await ExitProgram();
                 _form.FirstName = _input;
             }else await TryAgainCreateUser();
 
@@ -73,6 +76,7 @@ namespace CaseHandelApp.Services
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
+                if (_input == "q") await ExitProgram();
                 _form.LastName = _input;
             }else await TryAgainCreateUser();
             
@@ -81,8 +85,9 @@ namespace CaseHandelApp.Services
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
-                if (_input.ToLower().Trim() == "yes")
+                if (_input == "yes")
                     _form.UserTypeName = "Employee";
+                else if (_input=="q") await ExitProgram();
                 else _form.UserTypeName = "Customer";
             }else await TryAgainCreateUser();
 
@@ -90,38 +95,43 @@ namespace CaseHandelApp.Services
             _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
+                if (_input == "q") await ExitProgram();
                 _form.Email = _input;
             }
             else await TryAgainCreateUser();
 
             Console.WriteLine("***Please type in your PhoneNumber***");
-            _input= Console.ReadLine()!.Trim().ToLower(); 
+            _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
+                if (_input == "q") await ExitProgram();
                 _form.PhoneNumber = _input;
             }
             else await TryAgainCreateUser();
 
             Console.WriteLine("***Please type in your StreetName***");
-            _input= Console.ReadLine()!.Trim().ToLower(); 
+            _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
+                if (_input == "q") await ExitProgram();
                 _form.StreetName = _input;
             }
             else await TryAgainCreateUser();
 
             Console.WriteLine("***Please type in your PostalCode***");
-            _input= Console.ReadLine()!.Trim().ToLower(); 
+            _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
+                if (_input == "q") await ExitProgram();
                 _form.PostalCode = _input;
             }
             else await TryAgainCreateUser();
 
             Console.WriteLine("***Please type in your City***");
-            _input= Console.ReadLine()!.Trim().ToLower(); 
+            _input = Console.ReadLine()!.Trim().ToLower(); 
             if (!string.IsNullOrEmpty(_input))
             {
+                if (_input == "q") await ExitProgram();
                 _form.City = _input;
             }else await TryAgainCreateUser();
 
@@ -159,14 +169,30 @@ namespace CaseHandelApp.Services
                                 if (result != null) { Console.WriteLine($"Case: {_caseEntity.Title} is updated"); }
                                 else { Console.WriteLine($"***Case {_caseEntity.Title} is not found***"); }
                             }
-                        }                     
+                        }
                         else if (_input == "q") await ExitProgram();
-                        else Console.WriteLine("Invalid Input");                        
+                        else Console.WriteLine("Invalid Input");
                     }
                 }
-                else Console.WriteLine("Invaild CaseId\nIt should be in Format FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+                else
+                {
+                    Console.WriteLine("Invaild CaseId\nIt should be in Format FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+                    Console.ReadKey();
+                    Console.WriteLine("Press any key to the main menu");
+                    Console.ReadKey();
+                    await MainMenu();
+                }
+
             }
-            else Console.WriteLine("You did not enter a CaseId");
+            else
+            {
+                Console.WriteLine("You did not enter a CaseId");
+                Console.ReadKey();
+                Console.WriteLine("Press any key to the main menu");
+                Console.ReadKey();
+                await MainMenu();
+            }
+
         }
 
         private async Task CreateComment()
@@ -273,16 +299,20 @@ namespace CaseHandelApp.Services
         {
             var _form = new CaseRegistrationForm();
             Console.Clear();
+            Console.WriteLine("***If you want to quit, ANYTIME please enter Q***\n\n");
             Console.WriteLine("***Please verify yourself by enter your email***");
             string? _input = Console.ReadLine()!.Trim().ToLower();
             var userEntity= _userService.GetUser(_input).Result;
+            if (_input == "q") await ExitProgram();
             if (userEntity != null && _input==userEntity.Email)
             {
+                
                 _form.Email = _input;
                 Console.WriteLine("***Please type in the report name***");
                 _input = Console.ReadLine()!.Trim().ToLower();
                 if (!string.IsNullOrEmpty(_input))
                 {
+                    if (_input == "q") await ExitProgram();
                     _form.Title= _input;
                 }else await TryAgainCreateReport();
 
@@ -290,6 +320,7 @@ namespace CaseHandelApp.Services
                 _input = Console.ReadLine()!.Trim().ToLower();
                 if (!string.IsNullOrEmpty(_input))
                 {
+                    if (_input == "q") await ExitProgram();
                     _form.Description = _input;
                 }
                 else await TryAgainCreateReport();
