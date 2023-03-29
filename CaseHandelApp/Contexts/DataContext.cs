@@ -5,6 +5,7 @@ namespace CaseHandelApp.Contexts
 {
     internal class DataContext:DbContext
     {
+        private string _connectionstring = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\yihon\source\repos\CaseHandelApp\CaseHandelApp\Contexts\case_handel_local_db.mdf;Integrated Security=True;Connect Timeout=30";
         public DataContext()
         {
         }
@@ -15,7 +16,7 @@ namespace CaseHandelApp.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\yihon\source\repos\CaseHandelApp\CaseHandelApp\Contexts\case_handel_local_db.mdf;Integrated Security=True;Connect Timeout=30");
+            optionsBuilder.UseSqlServer(_connectionstring);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
